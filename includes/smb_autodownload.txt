@@ -1,0 +1,8 @@
+*assword.*
+*assw*.*
+pass*.xls
+Cred*.*
+cred*.*
+*pay*.*
+*Tax*.*
+*ccount*
