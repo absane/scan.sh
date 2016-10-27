@@ -7,7 +7,7 @@ rm -r includes/EyeWitness includes/Responder includes/yasuo includes/chuckle
 apt-get install xsltproc
 
 git clone https://github.com/ChrisTruncer/EyeWitness.git includes/EyeWitness
-git clone https://github.com/SpiderLabs/Responder.git includes/Responder
+git clone https://github.com/lgandx/Responder.git
 git clone https://github.com/0xsauby/yasuo.git includes/yasuo
 #git clone https://github.com/nccgroup/chuckle.git includes/chuckle
 
