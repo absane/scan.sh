@@ -31,7 +31,7 @@ if [ ! -d $SCAN_RESULTS_LOCATION ]; then
 fi
 
 #Port Scanning
-nmap -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 -sC --open -Pn --top-ports=5000
+nmap -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 -sC --open -Pn -n -p- --top-ports=100
 
 #Create HTML of Nmap Scan Results
 xsltproc $SCAN_RESULTS_LOCATION/$NETWORK.xml -o $SCAN_RESULTS_LOCATION/$NETWORK.html
@@ -43,20 +43,24 @@ mv $HOME/Parsed-Results/ $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/
 #Parse Nmap for report table on Nmap results
 python $HOME/includes/parse_nmap.py -f $SCAN_RESULTS_LOCATION/$NETWORK.xml
 
-# Yasuo scan
-cd includes/yasuo/
-./yasuo.rb -f $SCAN_RESULTS_LOCATION/$NETWORK.xml -b all > $SCAN_RESULTS_LOCATION/yasuo.txt
+# USE EYE WITNESS HERE.. screesnhot web + vnc + rdp
+cd $HOME/includes/EyeWitness/
+./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --headless -d $SCAN_RESULTS_LOCATION/EyeWhitnessWeb --no-prompt --active-scan --prepend-https
+./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --rdp -d $SCAN_RESULTS_LOCATION/EyeWhitnessRDP --no-prompt --active-scan --prepend-https
+./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --vnc -d $SCAN_RESULTS_LOCATION/EyeWhitnessVNC --no-prompt --active-scan --prepend-https
+mkdir -p $SCAN_RESULTS_LOCATION/EyeWhitness
+mv $SCAN_RESULTS_LOCATION/EyeWhitnessWeb $SCAN_RESULTS_LOCATION/EyeWhitnessRDP $SCAN_RESULTS_LOCATION/EyeWhitnessVNC $SCAN_RESULTS_LOCATION/EyeWhitness/
 cd $HOME
 
-# USE EYE WITNESS HERE.. screesnhot web + vnc + rdp
-#./EyeWitness.py -f $SCAN_RESULTS_LOCATION/$NETWORK.xml --all-protocols -d $SCAN_RESULTS_LOCATION/EyeWhitness --no-prompt
-### HAck until EyeWitness can parse XML correctly.
-cat $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Third-Party/PeepingTom.txt > /tmp/EW-hack.txt
-cat $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Matrix/TCP-Services-Matrix.csv | sed 's/,TCP,/:/' >> /tmp/EW-hack.txt
-$HOME/includes/EyeWitness/EyeWitness.py -f /tmp/EW-hack.txt --web --rdp -d $SCAN_RESULTS_LOCATION/EyeWhitness --no-prompt
-### End hack
-
-rm *.gnmap
+#enum4linux
+mkdir -p $SCAN_RESULTS_LOCATION/enum4linux/
+cat $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/445-TCP.txt > /tmp/smb1
+cat $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/139-TCP.txt >> /tmp/smb1
+cat /tmp/smb1 | sort -u > /tmp/smb
+for i in $(cat /tmp/smb)
+do
+	enum4linux $i | tee $SCAN_RESULTS_LOCATION/enum4linux/$i.txt
+done
 
 #Clean
 mkdir $SCAN_RESULTS_LOCATION/nmap_results
@@ -65,24 +69,32 @@ cp $HOME/$NETWORK $SCAN_RESULTS_LOCATION/
 rm -r $HOME/Desktop
 
 #SMB Spider
-smbtree -N > /tmp/shares
-cat /tmp/shares | grep -P "\t\t\\\\" | cut -d$'\t' -f3 | cut -d '\' -f4  | sed 's/ +//' | sort -u > /tmp/shares2
+smbtree -N -b > /tmp/shares
+cat /tmp/shares | grep -P "\t\t\\\\" | cut -d$'\t' -f3 | cut -d '\' -f1-4  | sed 's/ +//' | sort -u > /tmp/shares2
 mv /tmp/shares2 /tmp/shares
-cat $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/139-TCP.txt $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/445-TCP.txt | sort -u > /tmp/smb
-includes/smbspider.py -h /tmp/smb -u anonymous -p anonymous -f /tmp/shares -g includes/smb_autodownload.txt -w
+sed -i 's/[ \t]*$//' "$1" /tmp/shares
+sed -i 's/$/\\/' /tmp/shares
+includes/smbspider.py -h /tmp/shares -u anonymous -p anonymous -g includes/smb_autodownload.txt #-w
 mkdir -p $SCAN_RESULTS_LOCATION/smb
 mv smb* $SCAN_RESULTS_LOCATION/smb/
 
+# Yasuo scan
+cd includes/yasuo/
+./yasuo.rb -f $SCAN_RESULTS_LOCATION/$NETWORK.xml -b all > $SCAN_RESULTS_LOCATION/yasuo.txt
+cd $HOME
+
 #Open results in IceWeasel
-iceweasel &
+firefox &
 sleep 3
-iceweasel -new-tab $SCAN_RESULTS_LOCATION/yasuo.txt &
+firefox -new-tab $SCAN_RESULTS_LOCATION/yasuo.txt &
 sleep 1
-iceweasel -new-tab $SCAN_RESULTS_LOCATION/smb/ &
+firefox -new-tab $SCAN_RESULTS_LOCATION/smb/ &
 sleep 1
-iceweasel -new-tab $SCAN_RESULTS_LOCATION/EyeWhitness &
+firefox -new-tab $SCAN_RESULTS_LOCATION/EyeWhitness/ &
 sleep 1
-iceweasel -new-tab $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.html &
+firefox -mew-tab $SCAN_RESULTS_LOCATION/enum4linux/ &
+sleep 1
+firefox -new-tab $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.html &
 sleep 1
 
 #Open Zenmap
@@ -90,12 +102,12 @@ zenmap $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.xml &
 
 #Run Responder
 cd includes/Responder/
-python ./Responder.py -I $INTERFACE -b Off -r Off -w On
+python ./Responder.py -I eth0 -b -r -w -F --lm -f
 mkdir -p $SCAN_RESULTS_LOCATION/Responder_data
 cd logs
 for FILENAME in *; do mv $FILENAME $FILENAME.txt; done 
 mv * $SCAN_RESULTS_LOCATION/Responder_data/
-iceweasel -new-tab $SCAN_RESULTS_LOCATION/Responder_data/ &
+firefox -new-tab $SCAN_RESULTS_LOCATION/Responder_data/ &
 sleep 1
 
 cd $HOME
@@ -107,6 +119,4 @@ cd $HOME
 #hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/22-TCP.txt ssh -t4 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ssh.txt
 
 #iceweasel -new-tab $SCAN_RESULTS_LOCATION/bruteforced_creds/ &
-sleep 1
-
-
+#sleep 1
