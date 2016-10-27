@@ -1,10 +1,5 @@
 #!/bin/bash
 
-#if [[ $# -ne 3 ]] ; then
-#    echo "Usage: $0 <IP list> <Company Name> <Company website>"
-#    exit 0
-#fi
-
 xhost +
 
 rm -r .cache/ .config/ .gnome2* .mozilla/ .python-eggs/ .recon-ng/ .zenmap/ Desktop/ hydra.restore includes/yasuo/*.log
@@ -16,7 +11,6 @@ if [[ $# -ne 2 ]] ; then
     echo "<network interface> = eth0, wlan0, etc. thatis connected to the network you wish to scan."
     exit 0
 fi
-
 
 HOME=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 DUMP_LOCATION='scan_results'
@@ -74,7 +68,7 @@ cat /tmp/shares | grep -P "\t\t\\\\" | cut -d$'\t' -f3 | cut -d '\' -f1-4  | sed
 mv /tmp/shares2 /tmp/shares
 sed -i 's/[ \t]*$//' "$1" /tmp/shares
 sed -i 's/$/\\/' /tmp/shares
-includes/smbspider.py -h /tmp/shares -u anonymous -p anonymous -g includes/smb_autodownload.txt #-w
+includes/smbspider.py -h /tmp/shares -u anonymous -p anonymous -g includes/smb_autodownload.txt | tee smbspider_output.txt
 mkdir -p $SCAN_RESULTS_LOCATION/smb
 mv smb* $SCAN_RESULTS_LOCATION/smb/
 
@@ -83,22 +77,22 @@ cd includes/yasuo/
 ./yasuo.rb -f $SCAN_RESULTS_LOCATION/$NETWORK.xml -b all > $SCAN_RESULTS_LOCATION/yasuo.txt
 cd $HOME
 
+#Open Zenmap
+zenmap $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.xml & 
+
 #Open results in IceWeasel
 firefox &
 sleep 3
 firefox -new-tab $SCAN_RESULTS_LOCATION/yasuo.txt &
-sleep 1
+sleep 2
 firefox -new-tab $SCAN_RESULTS_LOCATION/smb/ &
-sleep 1
+sleep 2
 firefox -new-tab $SCAN_RESULTS_LOCATION/EyeWhitness/ &
-sleep 1
-firefox -mew-tab $SCAN_RESULTS_LOCATION/enum4linux/ &
-sleep 1
+sleep 2
+firefox -new-tab $SCAN_RESULTS_LOCATION/enum4linux/ &
+sleep 2
 firefox -new-tab $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.html &
-sleep 1
-
-#Open Zenmap
-zenmap $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.xml & 
+sleep 3
 
 #Run Responder
 cd includes/Responder/
