@@ -11,7 +11,7 @@ git clone https://github.com/lgandx/Responder.git includes/Responder
 git clone https://github.com/0xsauby/yasuo.git includes/yasuo
 #git clone https://github.com/nccgroup/chuckle.git includes/chuckle
 
-mv phantomjs $HOME/includes/EyeWitness/ 
+mv phantomjs includes/EyeWitness/ 
 cd includes/EyeWitness/setup/
 ./setup.sh
 cd ../../../
