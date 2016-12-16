@@ -25,14 +25,14 @@ if [ ! -d $SCAN_RESULTS_LOCATION ]; then
 fi
 
 #Port Scanning
-nmap -v --open –T4 –Pn –n –sS –F –oG /tmp/tcp.gnmap -iL $HOME/$NETWORK
-nmap -v --open –T4 –Pn –n –sY –F –oG /tmp/sctp.gnmap -iL $HOME/$NETWORK
-nmap -v --open –T4 –Pn –n –sU –p53,69,111,123,137,161,500,514,520 -oG /tmp/udp.gnmap -iL $HOME/$NETWORK
+nmap -e $INTERFACE -v --open –T4 –Pn –n –sS –F –oG /tmp/tcp.gnmap -iL $HOME/$NETWORK
+nmap -e $INTERFACE -v --open –T4 –Pn –n –sY –F –oG /tmp/sctp.gnmap -iL $HOME/$NETWORK
+nmap -e $INTERFACE -v --open –T4 –Pn –n –sU –p53,69,111,123,137,161,500,514,520 -oG /tmp/udp.gnmap -iL $HOME/$NETWORK
 grep Host /tmp/*.gnmap | awk '{print $2}' | sort | uniq > $HOME/$NETWORK
 
-nmap -v -T3 -Pn -open –sU -oA $SCAN_RESULTS_LOCATION/udp -iL $HOME/$NETWORK
+nmap -e $INTERFACE -v -T3 -Pn -open –sU -oA $SCAN_RESULTS_LOCATION/udp -iL $HOME/$NETWORK
 
-nmap -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 --script=broadcast,auth,default,firewalk,malware,vuln,discovery,tftp-enum --open -Pn -n -p-
+nmap -e $INTERFACE -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 --script=broadcast,auth,default,firewalk,malware,vuln,discovery,tftp-enum --open -Pn -n -p-
 
 mkdir -p $SCAN_RESULTS_LOCATION/hping3_results/
 
