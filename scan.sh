@@ -73,7 +73,7 @@ done
 
 #Clean
 mkdir $SCAN_RESULTS_LOCATION/nmap_results
-mv $SCAN_RESULTS_LOCATION/$NETWORK.{gnmap,nmap,xls,xml,html} $SCAN_RESULTS_LOCATION/nmap_results/
+mv $SCAN_RESULTS_LOCATION/*.{gnmap,nmap,xls,xml,html} $SCAN_RESULTS_LOCATION/nmap_results/
 cp $HOME/$NETWORK $SCAN_RESULTS_LOCATION/
 rm -r $HOME/Desktop
 
