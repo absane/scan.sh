@@ -32,7 +32,7 @@ grep Host /tmp/*.gnmap | awk '{print $2}' | sort | uniq > $HOME/$NETWORK
 
 nmap -e $INTERFACE -v -T3 -Pn -open –sU -oA $SCAN_RESULTS_LOCATION/udp -iL $HOME/$NETWORK
 
-nmap -e $INTERFACE -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 --script=broadcast,auth,default,firewalk,malware,vuln,discovery,tftp-enum --open -Pn -n -p-
+nmap -e $INTERFACE -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 --script=broadcast,auth,default,firewalk,malware,discovery,tftp-enum --open -Pn -n -p-
 
 mkdir -p $SCAN_RESULTS_LOCATION/hping3_results/
 
