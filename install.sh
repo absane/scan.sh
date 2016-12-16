@@ -4,7 +4,7 @@ cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd
 
 rm -r includes/EyeWitness includes/Responder includes/yasuo includes/chuckle
 
-apt-get install xsltproc
+apt-get install xsltproc firewalk
 
 git clone https://github.com/ChrisTruncer/EyeWitness.git includes/EyeWitness
 git clone https://github.com/lgandx/Responder.git includes/Responder
