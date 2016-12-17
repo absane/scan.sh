@@ -30,9 +30,9 @@ nmap -e $INTERFACE -v --open –T4 –Pn –n –sY –F –oG /tmp/sctp.gnmap -
 nmap -e $INTERFACE -v --open –T4 –Pn –n –sU –p53,69,111,123,137,161,500,514,520 -oG /tmp/udp.gnmap -iL $HOME/$NETWORK
 grep Host /tmp/*.gnmap | awk '{print $2}' | sort | uniq > $HOME/$NETWORK
 
-nmap -e $INTERFACE -v -T3 -Pn -open –sU -oA $SCAN_RESULTS_LOCATION/udp -iL $HOME/$NETWORK
+nmap -e $INTERFACE -v -T3 -Pn -open –sU –p53,69,111,123,137,161,500,514,520,5353 -oA $SCAN_RESULTS_LOCATION/$SCAN_RESULTS_LOCATION_udp -iL $HOME/$NETWORK
 
-nmap -e $INTERFACE -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 --script=broadcast,default,discovery,tftp-enum --open -Pn -n -p-
+nmap -e $INTERFACE -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 --script=broadcast,discovery,default --open -Pn -n -p-
 
 mkdir -p $SCAN_RESULTS_LOCATION/hping3_results/
 
@@ -53,8 +53,8 @@ python $HOME/includes/parse_nmap.py -f $SCAN_RESULTS_LOCATION/$NETWORK.xml
 
 # USE EYE WITNESS HERE.. screesnhot web + vnc + rdp
 cd $HOME/includes/EyeWitness/
-./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --headless -d $SCAN_RESULTS_LOCATION/EyeWhitnessWeb --no-prompt --active-scan --prepend-https
-./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --web -d $SCAN_RESULTS_LOCATION/EyeWhitnessWeb --no-prompt --active-scan --prepend-https
+./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --headless -d $SCAN_RESULTS_LOCATION/EyeWhitnessWeb1 --no-prompt --active-scan --prepend-https
+./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --web -d $SCAN_RESULTS_LOCATION/EyeWhitnessWeb2 --no-prompt --active-scan --prepend-https
 ./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --rdp -d $SCAN_RESULTS_LOCATION/EyeWhitnessRDP --no-prompt --active-scan
 ./EyeWitness.py -x $SCAN_RESULTS_LOCATION/$NETWORK.xml --vnc -d $SCAN_RESULTS_LOCATION/EyeWhitnessVNC --no-prompt --active-scan
 mkdir -p $SCAN_RESULTS_LOCATION/EyeWhitness
@@ -94,7 +94,7 @@ cd $HOME
 
 #Run Responder
 cd includes/Responder/
-python ./Responder.py -I eth0 -b -r -w -F --lm -f
+python ./Responder.py -I $INTERFACE -b -r -w -F --lm
 mkdir -p $SCAN_RESULTS_LOCATION/Responder_data
 cd logs
 for FILENAME in *; do mv $FILENAME $FILENAME.txt; done 
