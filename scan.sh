@@ -37,16 +37,9 @@ nmap -e $INTERFACE -v -T3 -Pn --open -sU -p53,67-69,11,123,135,137-139,161-162,4
 #TCP Scan on live hosts
 nmap -e $INTERFACE -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 -sC --open -Pn -n -p-
 
-#ICMP Scanning
-mkdir -p $SCAN_RESULTS_LOCATION/hping3_results/
-
-for i in $(cat $HOME/$NETWORK)
-do
-	hping3 --scan known -S $i > $SCAN_RESULTS_LOCATION/hping3_results/hping3_$i.txt
-done
-
 #Create HTML of Nmap Scan Results
 xsltproc $SCAN_RESULTS_LOCATION/$NETWORK.xml -o $SCAN_RESULTS_LOCATION/$NETWORK.html
+xsltproc $SCAN_RESULTS_LOCATION/${NETWORK}_udp.xml -o $SCAN_RESULTS_LOCATION/${NETWORK}_udp.html
 
 #Parse Nmap results for PeepingTom and service brute forcing
 echo 'y' | $HOME/includes/gnmapparser.sh -g $SCAN_RESULTS_LOCATION/
@@ -54,6 +47,14 @@ mv $HOME/Parsed-Results/ $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/
 
 #Parse Nmap for report table on Nmap results
 python $HOME/includes/parse_nmap.py -f $SCAN_RESULTS_LOCATION/$NETWORK.xml
+
+#ICMP Scanning
+mkdir -p $SCAN_RESULTS_LOCATION/hping3_results/
+
+for i in $(cat $HOME/$NETWORK)
+do
+	hping3 --scan known -S $i > $SCAN_RESULTS_LOCATION/hping3_results/hping3_$i.txt
+done
 
 # USE EYE WITNESS HERE.. screesnhot web + vnc + rdp
 cd $HOME/includes/EyeWitness/
