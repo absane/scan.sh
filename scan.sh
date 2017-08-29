@@ -102,7 +102,7 @@ cd $HOME
 
 #Run Responder
 cd includes/Responder/
-python ./Responder.py -I $INTERFACE -b -r -w -F --lm
+python ./Responder.py -I $INTERFACE
 mkdir -p $SCAN_RESULTS_LOCATION/Responder_data
 cd logs
 for FILENAME in *; do mv $FILENAME $FILENAME.txt; done 
