@@ -34,11 +34,11 @@ nmap -e $INTERFACE -v --open -T4 -Pn -n -sU -p53,69,111,123,137,161,500,514,520 
 grep Host /tmp/*.gnmap | awk '{print $2}' | sort | uniq > $HOME/$NETWORK
 
 #UDP Scan on live hosts
-nmap -e $INTERFACE -v -T3 -Pn --open -sU -p53,67-69,11,123,135,137-139,161-162,445,500,514,520,631,996-999,1434,1701,1900,3283,4500,5353,49152-49154 -sV -oA $SCAN_RESULTS_LOCATION/${NETWORK}_udp -sC -iL $HOME/$NETWORK
+nmap -e $INTERFACE --randomize-hosts -iL $HOME/$NETWORK -v -T4 -sC --open -Pn -n -sU -sV -oA $SCAN_RESULTS_LOCATION/${NETWORK}_udp -p53,67-69,11,123,135,137-139,161-162,445,500,514,520,631,996-999,1434,1701,1900,3283,4500,5353,49152-49154
 
 
 #TCP Scan on live hosts
-nmap -e $INTERFACE -iL $HOME/$NETWORK -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -vv -T4 -sC --open -Pn -n -p-
+nmap -e $INTERFACE --randomize-hosts -iL $HOME/$NETWORK -v -T4 -sC --open -Pn -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK -p-
 
 #Create HTML of Nmap Scan Results
 xsltproc $SCAN_RESULTS_LOCATION/$NETWORK.xml -o $SCAN_RESULTS_LOCATION/$NETWORK.html
