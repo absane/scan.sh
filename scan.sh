@@ -45,7 +45,7 @@ xsltproc $SCAN_RESULTS_LOCATION/${NETWORK}_udp.xml -o $SCAN_RESULTS_LOCATION/${N
 
 #Parse Nmap results for PeepingTom and service brute forcing
 echo 'y' | $HOME/includes/gnmapparser.sh -g $SCAN_RESULTS_LOCATION/
-mv $HOME/Parsed-Results/ $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results/
+mv $HOME/Parsed-Results/ $SCAN_RESULTS_LOCATION/Parsed_Nmap_Results
 
 #Parse Nmap for report table on Nmap results
 python $HOME/includes/parse_nmap.py -f $SCAN_RESULTS_LOCATION/$NETWORK.xml
