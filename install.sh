@@ -11,7 +11,8 @@ git clone https://github.com/ChrisTruncer/EyeWitness.git includes/EyeWitness
 git clone https://github.com/lgandx/Responder.git includes/Responder
 git clone https://github.com/0xsauby/yasuo.git includes/yasuo
 git clone https://github.com/portcullislabs/udp-proto-scanner.git includes/udp-proto-scanner
-#git clone https://github.com/nccgroup/chuckle.git includes/chuckle
+
+chmod u+x includes/dtpscan/dtpscan.sh
 
 mv phantomjs includes/EyeWitness/ 
 cd includes/EyeWitness/setup/
