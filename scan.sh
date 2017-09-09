@@ -25,7 +25,7 @@ if [ ! -d $SCAN_RESULTS_LOCATION ]; then
 fi
 
 # VLAN Hopping Scan
-echo $INTERFACE | $HOME/includes/dtpscan/dtpscan.sh > $SCAN_RESULTS_LOCATION/DTPScan_VLAN.txt
+echo $INTERFACE | $HOME/includes/dtpscan/dtpscan.sh | tee $SCAN_RESULTS_LOCATION/DTPScan_VLAN.txt
 
 #Port Scanning to enum all live hosts
 nmap -e $INTERFACE -v --open -T4 -Pn -n -sS -F -oG /tmp/tcp.gnmap -iL $HOME/$NETWORK
