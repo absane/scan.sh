@@ -28,17 +28,16 @@ fi
 echo $INTERFACE | $HOME/includes/dtpscan/dtpscan.sh | tee $SCAN_RESULTS_LOCATION/DTPScan_VLAN.txt
 
 #Port Scanning to enum all live hosts
-nmap -e $INTERFACE -v --open -T4 -Pn -n -sS -F -oG /tmp/tcp.gnmap -iL $HOME/$NETWORK
-nmap -e $INTERFACE -v --open -T4 -Pn -n -sY -F -oG /tmp/sctp.gnmap -iL $HOME/$NETWORK
-nmap -e $INTERFACE -v --open -T4 -Pn -n -sU -p53,69,111,123,137,161,500,514,520 -oG /tmp/udp.gnmap -iL $HOME/$NETWORK
-grep Host /tmp/*.gnmap | awk '{print $2}' | sort | uniq > $HOME/$NETWORK
+#nmap -e $INTERFACE -v --open -T4 -Pn -n -sS -F -oG /tmp/tcp.gnmap -iL $HOME/$NETWORK
+#nmap -e $INTERFACE -v --open -T4 -Pn -n -sY -F -oG /tmp/sctp.gnmap -iL $HOME/$NETWORK
+#nmap -e $INTERFACE -v --open -T4 -Pn -n -sU -p53,69,111,123,137,161,500,514,520 -oG /tmp/udp.gnmap -iL $HOME/$NETWORK
+#grep Host /tmp/*.gnmap | awk '{print $2}' | sort | uniq > $HOME/$NETWORK
 
 #UDP Scan on live hosts
 nmap -e $INTERFACE --randomize-hosts --spoof-mac=cisco -iL $HOME/$NETWORK -v -T4 --open -Pn -n -sU -sV -oA $SCAN_RESULTS_LOCATION/${NETWORK}_udp --source-port=53 --script=default,safe -p53,67-69,11,123,135,137-139,161-162,445,500,514,520,631,996-999,1434,1701,1900,3283,4500,5353,49152-49154
 
-
 #TCP Scan on live hosts
-nmap -e $INTERFACE --randomize-hosts --spoof-mac=cisco -iL $HOME/$NETWORK -v -T4 --open -Pn -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK --source-port=20 --script=default,safe --top-ports=5000
+nmap -e $INTERFACE --randomize-hosts --spoof-mac=cisco -iL $HOME/$NETWORK -v -T4 --open -Pn -n -sT -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK --source-port=20 --script=discover,default,safe,auth --top-ports=5000
 
 #Create HTML of Nmap Scan Results
 xsltproc $SCAN_RESULTS_LOCATION/$NETWORK.xml -o $SCAN_RESULTS_LOCATION/$NETWORK.html
