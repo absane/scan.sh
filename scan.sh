@@ -28,17 +28,18 @@ fi
 echo $INTERFACE | $HOME/includes/dtpscan/dtpscan.sh | tee $SCAN_RESULTS_LOCATION/DTPScan_VLAN.txt
 
 ## Port Scanning to enum all live hosts
-nmap -e $INTERFACE -vvv --reason --max-retries 0 --max-hostgroup 1 --randomize-hosts -n -sP -oG /tmp/ping.gnmap -iL $HOME/$NETWORK
-nmap -e $INTERFACE -vvv --reason --max-retries 0 --max-hostgroup 1 --randomize-hosts --open -T4 -Pn -n -sS -F -oG /tmp/tcp1.gnmap -iL $HOME/$NETWORK
-nmap -e $INTERFACE -vvv --reason --max-retries 0 --max-hostgroup 1 --randomize-hosts --open -T4 -Pn -n -sY -F -oG /tmp/tcp2.gnmap -iL $HOME/$NETWORK
-nmap -e $INTERFACE -vvv --reason --max-retries 0 --max-hostgroup 1 --randomize-hosts --open -T4 -Pn -n -sU -p53,69,111,123,137,161,500,514,520 -oG /tmp/udp.gnmap -iL $HOME/$NETWORK
-grep Host /tmp/*.gnmap | awk '{print $2}' | sort | uniq > $HOME/$NETWORK
+nmap -e $INTERFACE -vvv --reason --max-retries 5 --randomize-hosts -PEPM -sn -n -oG /tmp/ping.gnmap -iL $HOME/$NETWORK
+nmap -e $INTERFACE -vvv --reason --max-retries 0 --randomize-hosts --open -T4 -Pn -n -sS -F -oG /tmp/tcp1.gnmap -iL $HOME/$NETWORK --top-ports=500
+nmap -e $INTERFACE -vvv --reason --max-retries 0 --randomize-hosts --open -T4 -Pn -n -sY -F -oG /tmp/tcp2.gnmap -iL $HOME/$NETWORK --top-ports=500
+nmap -e $INTERFACE -vvv --reason --max-retries 0 --randomize-hosts --open -T4 -Pn -n -sU -p53,69,111,123,137,161,500,514,520 -oG /tmp/udp.gnmap -iL $HOME/$NETWORK
+grep Host /tmp/*.gnmap | grep Up | awk '{print $2}' | sort | uniq > $HOME/$NETWORK
 
 ## UDP Scan on live hosts
-nmap -e $INTERFACE -vvv --reason --max-retries 0 --max-hostgroup 1 --randomize-hosts --open -T4 -Pn -n -sU -sV -oA $SCAN_RESULTS_LOCATION/${NETWORK}_udp --source-port=53 --script=default,safe -p53,67-69,11,123,135,137-139,161-162,445,500,514,520,631,996-999,1434,1701,1900,3283,4500,5353,49152-49154 -iL $HOME/$NETWORK
+nmap -e $INTERFACE -vvv --reason --max-retries 0 --randomize-hosts --open -T4 -Pn -n -sU -sV -oA $SCAN_RESULTS_LOCATION/${NETWORK}_udp --source-port=53 --script=default,safe --script-args "shodan-api.apikey=${SHODANAPIKEY}" -p53,67-69,11,123,135,137-139,161-162,445,500,514,520,631,996-999,1434,1701,1900,3283,4500,5353,49152-49154 -iL $HOME/$NETWORK
 
 ## TCP Scan on live hosts
-nmap -e $INTERFACE --randomize-hosts  --max-hostgroup 1 -iL $HOME/$NETWORK -vvv -T4 --open -Pn -n -sS -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK --source-port=80 --script=default,safe --top-ports=2000
+nmap -e $INTERFACE --randomize-hosts -iL $HOME/$NETWORK -vvv -T4 --open -Pn -n -sS -sV -oA $SCAN_RESULTS_LOCATION/$NETWORK --source-port=80 --script=default,safe -script-args "shodan-api.apikey=${SHODANAPIKEY}" -p-
+
 ## Create HTML of Nmap Scan Results
 xsltproc $SCAN_RESULTS_LOCATION/$NETWORK.xml -o $SCAN_RESULTS_LOCATION/$NETWORK.html
 xsltproc $SCAN_RESULTS_LOCATION/${NETWORK}_udp.xml -o $SCAN_RESULTS_LOCATION/${NETWORK}_udp.html
