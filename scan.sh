@@ -27,9 +27,6 @@ fi
 ## VLAN Hopping Scan
 echo $INTERFACE | $HOME/includes/dtpscan/dtpscan.sh | tee $SCAN_RESULTS_LOCATION/DTPScan_VLAN.txt
 
-net:167.121.0.0/16 -port:443 -port:80 -port:123 -port:6001 -port:4786 -port:4500 -port:500 -port:22 -port:25 -port:21
-
-
 ## Port Scanning to enum all live hosts
 nmap -e $INTERFACE -vvv --reason --max-retries 0 --max-hostgroup 1 --randomize-hosts -n -sP -oG /tmp/ping.gnmap -iL $HOME/$NETWORK
 nmap -e $INTERFACE -vvv --reason --max-retries 0 --max-hostgroup 1 --randomize-hosts --open -T4 -Pn -n -sS -F -oG /tmp/tcp1.gnmap -iL $HOME/$NETWORK
