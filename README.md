@@ -2,7 +2,7 @@
 Built for internal network scanning and pentesting, but can be used for external testing as well.
 
 ## Authors & Contributors ##
-James Sibley <absane@versprite.com>
+James Sibley
 
 ## Details ##
 TODO
